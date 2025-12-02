@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Network Compression Studio</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background-color: #000;
+            color: #fff;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #fff;
+            padding-bottom: 1.5rem;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 0.75rem;
+        }
+
+        .header p {
+            font-size: 1.125rem;
+            font-weight: 300;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (min-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 350px 1fr;
+            }
+        }
+
+        .panel {
+            background: #fff;
+            color: #000;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 2px solid #000;
+        }
+
+        .panel h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #000;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group select,
+        .form-group input[type="range"] {
+            width: 100%;
+        }
+
+        select {
+            padding: 0.75rem;
+            border: 2px solid #000;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            background: #fff;
+        }
+
+        .info-text {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: #374151;
+        }
+
+        input[type="range"] {
+            accent-color: #000;
+            height: 6px;
+        }
+
+        .range-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #374151;
+            margin-top: 0.25rem;
+        }
+
+        .techniques-box {
+            background: #000;
+            color: #fff;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .techniques-box h3 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .techniques-box ul {
+            list-style: none;
+            font-size: 0.875rem;
+        }
+
+        .techniques-box li {
+            padding: 0.25rem 0;
+        }
+
+        .techniques-box li::before {
+            content: "●";
+            margin-right: 0.5rem;
+        }
+
+        button {
+            width: 100%;
+            padding: 1rem;
+            background: #000;
+            color: #fff;
+            border: 2px solid #000;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover:not(:disabled) {
+            background: #1f2937;
+            transform: scale(1.02);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .metric-card {
+            background: #fff;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: 2px solid #000;
+            text-align: center;
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            color: #374151;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .chart-box {
+            background: #fff;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            border: 2px solid #000;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-box h3 {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #000;
+        }
+
+        .bar-chart {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-end;
+            height: 250px;
+            padding: 1rem 0;
+        }
+
+        .bar-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .bars {
+            display: flex;
+            gap: 0.5rem;
+            align-items: flex-end;
+            height: 200px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .bar {
+            width: 40px;
+            background: #000;
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .bar:nth-child(2) { background: #4b5563; }
+        .bar:nth-child(3) { background: #6b7280; }
+        .bar:nth-child(4) { background: #9ca3af; }
+
+        .bar-label {
+            font-size: 0.75rem;
+            color: #000;
+            font-weight: 600;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            color: #000;
+            margin-bottom: 1rem;
+        }
+
+        .summary-item {
+            font-size: 0.9rem;
+        }
+
+        .summary-item strong {
+            font-weight: 600;
+        }
+
+        .deployment-info {
+            background: #000;
+            color: #fff;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .placeholder {
+            background: #fff;
+            padding: 4rem 2rem;
+            border-radius: 1rem;
+            border: 2px solid #000;
+            text-align: center;
+        }
+
+        .placeholder-emoji {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .placeholder h3 {
+            font-size: 1.5rem;
+            color: #000;
+            margin-bottom: 0.5rem;
+        }
+
+        .placeholder p {
+            color: #374151;
+        }
+
+        .footer {
+            background: #fff;
+            color: #000;
+            text-align: center;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: 2px solid #000;
+            font-size: 0.875rem;
+        }
+
+        .footer strong {
+            font-weight: 600;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            vertical-align: middle;
+            margin-right: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2rem; }
+            body { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Neural Network Compression Studio</h1>
+            <p>Advanced Model Optimization for Edge Deployment</p>
+        </div>
+
+        <div class="main-grid">
+            <!-- Configuration Panel -->
+            <div class="panel">
+                <h2>Configuration</h2>
+                
+                <div class="form-group">
+                    <label>Base Model</label>
+                    <select id="modelSelect">
+                        <option value="resnet50">ResNet-50</option>
+                        <option value="mobilenet">MobileNet-V2</option>
+                        <option value="efficientnet">EfficientNet-B0</option>
+                        <option value="vgg16">VGG-16</option>
+                    </select>
+                    <div class="info-text" id="modelInfo"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Compression Method</label>
+                    <select id="methodSelect">
+                        <option value="quantization">Quantization</option>
+                        <option value="pruning">Pruning</option>
+                        <option value="distillation">Knowledge Distillation</option>
+                        <option value="decomposition">Tensor Decomposition</option>
+                    </select>
+                    <div class="info-text" id="methodInfo"></div>
+                </div>
+
+                <div class="form-group" id="quantizationControl">
+                    <label>Bit Width: <span id="bitValue">8</span>-bit</label>
+                    <input type="range" id="bitWidth" min="2" max="8" value="8" step="1">
+                    <div class="range-labels">
+                        <span>2-bit</span>
+                        <span>4-bit</span>
+                        <span>8-bit</span>
+                    </div>
+                </div>
+
+                <div class="form-group" id="pruningControl" style="display: none;">
+                    <label>Pruning Level: <span id="pruneValue">50</span>%</label>
+                    <input type="range" id="pruneLevel" min="10" max="90" value="50" step="5">
+                    <div class="range-labels">
+                        <span>Conservative</span>
+                        <span>Aggressive</span>
+                    </div>
+                </div>
+
+                <div class="techniques-box">
+                    <h3>Techniques:</h3>
+                    <ul id="techniquesList"></ul>
+                </div>
+
+                <button id="compressBtn">Compress Model</button>
+            </div>
+
+            <!-- Results Panel -->
+            <div id="resultsPanel"></div>
+        </div>
+
+        <div class="footer">
+            <strong>Edge AI Optimization</strong> | 
+            Techniques: Quantization • Pruning • Distillation • Decomposition | 
+            Optimized for: Mobile • IoT • Embedded Systems
+        </div>
+    </div>
+
+    <script>
+        const modelSpecs = {
+            resnet50: { size: 97.8, params: 25.6, accuracy: 76.1 },
+            mobilenet: { size: 16.2, params: 4.2, accuracy: 71.3 },
+            efficientnet: { size: 29.0, params: 5.3, accuracy: 77.1 },
+            vgg16: { size: 528.0, params: 138.0, accuracy: 71.5 }
+        };
+
+        const methods = {
+            quantization: {
+                name: 'Quantization',
+                desc: 'Reduce precision of weights and activations',
+                techniques: ['INT8', 'INT4', 'Mixed Precision']
+            },
+            pruning: {
+                name: 'Pruning',
+                desc: 'Remove unnecessary weights and connections',
+                techniques: ['Magnitude-based', 'Structured', 'Unstructured']
+            },
+            distillation: {
+                name: 'Knowledge Distillation',
+                desc: 'Transfer knowledge from large to small model',
+                techniques: ['Soft Targets', 'Feature Matching', 'Attention Transfer']
+            },
+            decomposition: {
+                name: 'Tensor Decomposition',
+                desc: 'Factorize weight matrices',
+                techniques: ['SVD', 'Tucker', 'CP Decomposition']
+            }
+        };
+
+        let currentModel = 'resnet50';
+        let currentMethod = 'quantization';
+        let bitWidth = 8;
+        let pruneLevel = 50;
+
+        const modelSelect = document.getElementById('modelSelect');
+        const methodSelect = document.getElementById('methodSelect');
+        const bitWidthInput = document.getElementById('bitWidth');
+        const pruneLevelInput = document.getElementById('pruneLevel');
+        const compressBtn = document.getElementById('compressBtn');
+        const resultsPanel = document.getElementById('resultsPanel');
+
+        function updateModelInfo() {
+            const spec = modelSpecs[currentModel];
+            document.getElementById('modelInfo').textContent = 
+                `Size: ${spec.size}MB | Params: ${spec.params}M | Acc: ${spec.accuracy}%`;
+        }
+
+        function updateMethodInfo() {
+            document.getElementById('methodInfo').textContent = methods[currentMethod].desc;
+            const list = document.getElementById('techniquesList');
+            list.innerHTML = methods[currentMethod].techniques.map(t => `<li>${t}</li>`).join('');
+            
+            document.getElementById('quantizationControl').style.display = 
+                currentMethod === 'quantization' ? 'block' : 'none';
+            document.getElementById('pruningControl').style.display = 
+                currentMethod === 'pruning' ? 'block' : 'none';
+        }
+
+        function calculateCompression() {
+            const baseModel = modelSpecs[currentModel];
+            let ratio, size, accuracy, speedup, power;
+
+            switch(currentMethod) {
+                case 'quantization':
+                    ratio = 32 / bitWidth;
+                    size = baseModel.size / ratio;
+                    accuracy = baseModel.accuracy - (bitWidth === 8 ? 0.3 : bitWidth === 4 ? 1.2 : 2.5);
+                    speedup = ratio * 0.8;
+                    power = 100 - (ratio * 15);
+                    break;
+                case 'pruning':
+                    ratio = 100 / (100 - pruneLevel);
+                    size = baseModel.size * (1 - pruneLevel/100);
+                    accuracy = baseModel.accuracy - (pruneLevel * 0.02);
+                    speedup = 1 + (pruneLevel * 0.015);
+                    power = 100 - (pruneLevel * 0.3);
+                    break;
+                case 'distillation':
+                    ratio = 4.0;
+                    size = baseModel.size / 4;
+                    accuracy = baseModel.accuracy - 2.5;
+                    speedup = 3.8;
+                    power = 65;
+                    break;
+                case 'decomposition':
+                    ratio = 2.5;
+                    size = baseModel.size / 2.5;
+                    accuracy = baseModel.accuracy - 1.0;
+                    speedup = 2.2;
+                    power = 75;
+                    break;
+            }
+
+            return {
+                original: baseModel,
+                compressed: {
+                    ratio: ratio.toFixed(2),
+                    size: size.toFixed(1),
+                    accuracy: accuracy.toFixed(1),
+                    speedup: speedup.toFixed(2),
+                    power: power.toFixed(1)
+                }
+            };
+        }
+
+        function displayResults(results) {
+            const orig = results.original;
+            const comp = results.compressed;
+
+            resultsPanel.innerHTML = `
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Compression</div>
+                        <div class="metric-value">${comp.ratio}x</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Model Size</div>
+                        <div class="metric-value">${comp.size}MB</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Speedup</div>
+                        <div class="metric-value">${comp.speedup}x</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Accuracy</div>
+                        <div class="metric-value">${comp.accuracy}%</div>
+                    </div>
+                </div>
+
+                <div class="chart-box">
+                    <h3>Performance Comparison</h3>
+                    <div class="bar-chart">
+                        <div class="bar-group">
+                            <div class="bars">
+                                <div class="bar" style="height: ${(orig.size/orig.size)*100}%"></div>
+                                <div class="bar" style="height: ${(orig.accuracy/orig.accuracy)*100}%"></div>
+                                <div class="bar" style="height: 100%"></div>
+                                <div class="bar" style="height: 100%"></div>
+                            </div>
+                            <div class="bar-label">Original</div>
+                        </div>
+                        <div class="bar-group">
+                            <div class="bars">
+                                <div class="bar" style="height: ${(parseFloat(comp.size)/orig.size)*100}%"></div>
+                                <div class="bar" style="height: ${(parseFloat(comp.accuracy)/orig.accuracy)*100}%"></div>
+                                <div class="bar" style="height: ${(100/parseFloat(comp.speedup))}%"></div>
+                                <div class="bar" style="height: ${comp.power}%"></div>
+                            </div>
+                            <div class="bar-label">Compressed</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: center; gap: 1.5rem; margin-top: 1rem; font-size: 0.75rem;">
+                        <span>■ Size (MB)</span>
+                        <span style="color: #4b5563;">■ Accuracy (%)</span>
+                        <span style="color: #6b7280;">■ Latency (ms)</span>
+                        <span style="color: #9ca3af;">■ Power (%)</span>
+                    </div>
+                </div>
+
+                <div class="chart-box">
+                    <h3>Optimization Summary</h3>
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <strong>Size Reduction:</strong> ${orig.size}MB → ${comp.size}MB
+                        </div>
+                        <div class="summary-item">
+                            <strong>Accuracy Loss:</strong> ${(orig.accuracy - parseFloat(comp.accuracy)).toFixed(2)}%
+                        </div>
+                        <div class="summary-item">
+                            <strong>Inference Speedup:</strong> ${comp.speedup}x faster
+                        </div>
+                        <div class="summary-item">
+                            <strong>Power Efficiency:</strong> ${(100 - parseFloat(comp.power)).toFixed(1)}% reduction
+                        </div>
+                    </div>
+                    <div class="deployment-info">
+                        <strong>Edge Deployment:</strong> This compressed model is optimized for deployment on edge devices with ${comp.ratio}x smaller footprint, ${comp.speedup}x faster inference, and significantly reduced power consumption, making it ideal for mobile, IoT, and embedded systems.
+                    </div>
+                </div>
+            `;
+        }
+
+        function showPlaceholder() {
+            resultsPanel.innerHTML = `
+                <div class="placeholder">
+                    <div class="placeholder-emoji">🚀</div>
+                    <h3>Ready to Optimize</h3>
+                    <p>Select your model and compression technique, then click "Compress Model" to see the optimization results.</p>
+                </div>
+            `;
+        }
+
+        modelSelect.addEventListener('change', (e) => {
+            currentModel = e.target.value;
+            updateModelInfo();
+        });
+
+        methodSelect.addEventListener('change', (e) => {
+            currentMethod = e.target.value;
+            updateMethodInfo();
+        });
+
+        bitWidthInput.addEventListener('input', (e) => {
+            bitWidth = parseInt(e.target.value);
+            document.getElementById('bitValue').textContent = bitWidth;
+        });
+
+        pruneLevelInput.addEventListener('input', (e) => {
+            pruneLevel = parseInt(e.target.value);
+            document.getElementById('pruneValue').textContent = pruneLevel;
+        });
+
+        compressBtn.addEventListener('click', () => {
+            compressBtn.disabled = true;
+            compressBtn.innerHTML = '<span class="loading"></span>Compressing...';
+            
+            setTimeout(() => {
+                const results = calculateCompression();
+                displayResults(results);
+                compressBtn.disabled = false;
+                compressBtn.textContent = 'Compress Model';
+            }, 1500);
+        });
+
+        // Initialize
+        updateModelInfo();
+        updateMethodInfo();
+        showPlaceholder();
+    </script>
+</body>
+</html>
